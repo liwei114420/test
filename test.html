@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+ <html>
+     <head>
+         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+         <title>
+             身份证号校验
+         </title>
+         <link rel="stylesheet" type="text/css" href="res/bootstrap-3.3.7/dist/css/bootstrap.min.css">
+        <link rel="stylesheet" type="text/css" href="res/bootstrap-3.3.7/dist/css/bootstrap-theme.css">
+        <link rel="stylesheet" type="text/css" href="res/bootstrap-table-master/dist/bootstrap-table.min.css">
+        <script type="text/javascript" src="js/jquery-3.3.1.min.js"></script>
+        <script type="text/javascript" src="res/bootstrap-3.3.7/dist/js/bootstrap.min.js"></script>
+        <script type="text/javascript" src="res/bootstrap-table-master/dist/bootstrap-table.min.js"></script>
+        <script type="text/javascript" src="res/bootstrap-table-master/dist/locale/bootstrap-table-zh-CN.min.js"></script>
+         <script type="text/javascript" src="js/jquery.validate.js"></script>
+         </script>
+         <script type="text/javascript">
+             $(function () {
+                 $("#form1").validate({
+                     rules: {
+                         txtIdCard: "isIdCard"
+                     }
+                 });
+             });
+             // 身份证号验证 
+             function isIdCard(cardid) {
+                 //身份证正则表达式(18位) 
+                 var isIdCard2 = /^[1-9]\d{5}(19\d{2}|[2-9]\d{3})((0\d)|(1[0-2]))(([0|1|2]\d)|3[0-1])(\d{4}|\d{3}X)$/i;
+                 var stard = "10X98765432"; //最后一位身份证的号码
+                 var first = [7, 9, 10, 5, 8, 4, 2, 1, 6, 3, 7, 9, 10, 5, 8, 4, 2]; //1-17系数
+                 var sum = 0;
+                 if (!isIdCard2.test(cardid)) {
+                     return false;
+                 }
+                 var year = cardid.substr(6, 4);
+                 var month = cardid.substr(10, 2);
+                 var day = cardid.substr(12, 2);
+                 var birthday = cardid.substr(6, 8);
+                 if (birthday != dateToString(new Date(year+'/'+month+'/'+day))) {//校验日期是否合法
+                     return false;
+                 }
+                 for (var i = 0; i < cardid.length - 1; i++) {
+                     sum += cardid[i] * first[i];
+                 }
+                 var result = sum % 11;
+                 var last = stard[result]; //计算出来的最后一位身份证号码
+                 if (cardid[cardid.length - 1].toUpperCase() == last) {
+                     return true;
+                 } else {
+                     return false;
+                 }
+             }
+             //日期转字符串 返回日期格式20080808
+             function dateToString(date) {
+                 if (date instanceof Date) {
+                     var year = date.getFullYear();
+                     var month = date.getMonth() + 1;
+                     month = month < 10 ? '0' + month : month;
+                     var day = date.getDate();
+                     day = day < 10 ? '0' + day : day;
+                     return year + month + day;
+                 }
+                 return '';
+             }
+             // jquery validate身份证号验证
+             jQuery.validator.addMethod("isIdCard",
+             function (value, element) {
+                 return this.optional(element) || (isIdCard(value));
+             },
+             "身份证号非法！");
+         </script>
+     </head>
+     <body>
+
+         <form id="form1" method="get" action="">
+            <input type="text" id="txtIdCard" name="txtIdCard" />
+            <input class="submit" type="submit" value="提交" />
+         </form>
+     </body>
+ </html>　　

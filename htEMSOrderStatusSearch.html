@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>后台邮政订单状态查询（单个）</title> <!-- //暂时不用 -->
+	<meta name=viewport content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" type="text/css" href="res/bootstrap-3.3.7/dist/css/bootstrap.min.css">
+	<link rel="stylesheet" type="text/css" href="res/bootstrap-3.3.7/dist/css/bootstrap-theme.css">
+	<link rel="stylesheet" type="text/css" href="res/bootstrap-table-master/dist/bootstrap-table.min.css">
+	<script type="text/javascript" src="js/jquery-3.3.1.min.js"></script>
+	<script type="text/javascript" src="res/bootstrap-3.3.7/dist/js/bootstrap.min.js"></script>
+	<script type="text/javascript" src="res/bootstrap-table-master/dist/bootstrap-table.min.js"></script>
+	<script type="text/javascript" src="res/bootstrap-table-master/dist/locale/bootstrap-table-zh-CN.min.js"></script>
+</head>
+<style type="text/css" media="screen">
+	.container{
+		text-align: center;
+	}
+	.title{
+		color: #ff9800;
+	}
+	.container .header{
+		padding-top:30px;
+		margin: 0 auto;
+	}
+	.container .header input{
+		height: 40px;
+		font-size: 16px;
+	}
+	#search{
+		height: 40px;
+	}
+	.content{
+		margin-top:50px;
+	}
+	.tb_th tr th{
+		text-align: center;
+		vertical-align: middle;
+	}
+</style>
+<body>
+	<div class="container">
+		<h3 class="title">后台邮政订单状态查询</h3>
+		<div class="input-group col-lg-3 header" >
+                <input type="text" class="form-control" placeholder="请输入身份证号码...." id="sfzhm">
+                <span class="input-group-btn">
+                    <button class="btn btn-default" type="button" id="search"><i class="glyphicon glyphicon-search" ></i></button>
+                </span>    
+        </div>
+        <div class="table-responsive content ">
+        	<table class="table table-bordered">
+        		<thead class="tb_th">
+        			<tr class="success">
+        				<th>序号</th>
+        				<th>车主姓名</th>
+        				<th>联系电话</th>
+        				<th>车牌号码</th>
+        				<th>邮寄方式</th>
+        				<th>邮寄状态</th>
+        			</tr>
+        		</thead>
+        		<tbody id="tb">
+        		</tbody>
+        	</table>
+        </div>
+	</div>
+	<script type="text/javascript">
+		$(function(){
+			$("#search").on('click', function(event) {
+				var $id=$("#sfzhm").val();
+				var reg = /(^\d{15}$)|(^\d{17}(\d|X)$)/; 
+				if(reg.test($id)===false){
+					alert("身份证输入错误")
+				}else{
+					$.ajax({
+			  			type: "get",  
+			            url: "https://api.myjson.com/bins/1h00ok",
+						dataType : "json", // 指定返回类型 
+			            success: function (data) {
+							if(data.length!=0){
+								var html="";
+								html+="<tr>";
+								html+="<td>"+1+"</td>";
+								html+="<td>"+data[0].czxm+"</td>";
+								html+="<td>"+data[0].lxdh+"</td>";
+								html+="<td>"+data[0].cphm+"</td>";
+								var state="";
+								if(data[0].yjfs==1){
+									state="自取";
+								}
+								if(data[0].yjfs==2){
+									state="邮寄";
+								}
+								html+="<td>"+state+"</td>";
+								var state1 = "";
+						        if(data[0].yjzt=="1"){
+						            state1 = "未寄出";
+						        }else if(data[0].yjzt=="2"){
+						            state1 = "已寄出";
+						        }else if(data[0].yjzt=="3"){
+						            state1 = "已取走";
+						        }
+								html+="<td>"+state1+"</td>";
+								html+="</tr>";
+								$("#tb").html(html);
+							}else{
+								alert("数据加载失败");
+							}
+			            },  
+			            error: function () {  
+			                alert("查询信息失败");  
+			            }  
+			  		});
+				}
+
+			});
+		});
+
+
+	</script>
+</body>
+</html>

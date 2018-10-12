@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name=viewport content="width=device-width, initial-scale=1">
+	<title>公众号邮政订单状态查询（单个）</title>
+	<link rel="stylesheet" type="text/css" href="res/bootstrap-3.3.7/dist/css/bootstrap.min.css">
+	<link rel="stylesheet" type="text/css" href="res/bootstrap-3.3.7/dist/css/bootstrap-theme.css">
+	<link rel="stylesheet" type="text/css" href="res/bootstrap-table-master/dist/bootstrap-table.min.css">
+	<script type="text/javascript" src="js/jquery-3.3.1.min.js"></script>
+	<script type="text/javascript" src="res/bootstrap-3.3.7/dist/js/bootstrap.min.js"></script>
+	<script type="text/javascript" src="res/bootstrap-table-master/dist/bootstrap-table.min.js"></script>
+	<script type="text/javascript" src="res/bootstrap-table-master/dist/locale/bootstrap-table-zh-CN.min.js"></script>
+</head>
+<style type="text/css" media="screen">
+	html {
+		font-size:62.5%;
+	}
+	.container{
+		text-align: center;
+	}
+	.title{
+		color: #ff9800;
+	}
+	.container .header{
+		padding-top:30px;
+		margin: 0 auto;
+	}
+	.container .header input{
+		height: 40px;
+		font-size: 1.6rem;
+	}
+	#search{
+		height: 40px;
+	}
+	.content{
+		margin-top:50px;
+	}
+	.row{
+		margin-top:30px;
+		text-align: left;
+	}
+	.row div{
+		margin: 1% 15%;
+		font-size: 1.6rem;
+		width: 70%;
+	}
+	.row div strong{
+		color:#03a9f4;
+	}
+	.row div span{
+		color: #ff5722;
+	}
+	#btn{
+		color: #9e9e9e;
+		background: #795548;
+		border:1px #795548 solid;
+	}
+	.package-status {
+	    padding: 18px 0 0 0;
+	    width: 80%;
+	    height: 400px;
+	}
+
+	.package-status .status-list {
+	    margin: 0;
+	    padding: 0;
+	    margin-top: -5px;
+	    padding-left: 8px;
+	    list-style: none;
+	}
+
+	.package-status .status-list li {
+	    border-left: 2px solid #d9d9d9;
+	    text-align: left;
+	}
+
+	.package-status .status-list li:before {
+	    /* 流程点的样式 */
+	    content: '';
+	    border: 3px solid #f3f3f3;
+	    background-color: #d9d9d9;
+	    display: inline-block;
+	    width: 15px;
+	    height: 15px;
+	    border-radius: 10px;
+	    margin-left: -9px;
+	    margin-right: 10px
+	}
+
+	.package-status .status-list .latest:before {
+	    background-color: #0dad12;
+	    border-color: #f8e9e4;
+	}
+
+	.package-status .status-box {
+	    overflow: hidden
+	}
+
+	.package-status .status-list li {
+	    height: auto;
+	}
+
+	.package-status .status-list {
+	    margin-top: -8px
+	}
+
+	.package-status .status-box {
+	    position: relative
+	}
+
+	.package-status .status-box:before {
+	    content: " ";
+	    background-color: #f3f3f3;
+	    display: block;
+	    position: absolute;
+	    top: -8px;
+	    left: 20px;
+	    width: 10px;
+	    height: 4px
+	}
+
+	.package-status .status-list {
+	    margin-top: 0px;
+	}
+
+
+	/* .package-status .status-list .latest{border:none} */
+
+
+	/* .package-status .status-list li{margin-bottom:-2px} */
+
+	.status-list li:not(:first-child) {
+	    padding-top: 10px;
+	}
+
+	.status-content-before {
+	    text-align: left;
+	    margin-left: 25px;
+	    margin-top: -20px;
+	}
+
+	.status-content-latest {
+	    text-align: left;
+	    margin-left: 25px;
+	    color: green;
+	    margin-top: -20px;
+	}
+
+	.status-time-before {
+	    text-align: left;
+	    margin-left: 25px;
+	    font-size: 10px;
+	    margin-top: 5px;
+	}
+
+	.status-time-latest {
+	    text-align: left;
+	    margin-left: 25px;
+	    color: green;
+	    font-size: 10px;
+	    margin-top: 5px;
+	}
+
+	.status-line {
+	    border-bottom: 1px solid #ccc;
+	    margin-left: 25px;
+	    margin-top: 10px;
+	}
+</style>
+<body>
+	<div class="container">
+		<h3 class="title"><!-- 公众号 -->邮政订单个人状态查看</h3>
+		<!-- <div class="input-group col-lg-3 header" >
+                <input type="text" class="form-control" placeholder="请输入身份证号码...." id="sfzhm">
+                <span class="input-group-btn">
+                    <button class="btn btn-default" type="button" id="search"><i class="glyphicon glyphicon-search" ></i></button>
+                </span>    
+        </div> -->
+        <div class="row">
+			<div class="col-xs-12"><strong>车主姓名：</strong><span id=czxm></span></div>
+			<div class="col-xs-12"><strong>联系电话：</strong><span id=lxdh></span></div>
+			<div class="col-xs-12"><strong>车牌号码：</strong><span id="cphm"></span></div>
+			<div class="col-xs-12"><strong>邮寄方式：</strong><span id="yjfs"></span></div>
+			<div class="col-xs-12" id="parent_btn"><strong>邮寄状态：</strong><span id="yjzt"></span></div>
+		</div>
+    </div>	
+	<div class="package-status">
+	    <div class="status-box">
+	    </div>
+	</div>
+	<script type="text/javascript">
+		//获取用户基本信息
+		$(function(){
+			$.ajax({
+	  			type: "get",                                //https://api.myjson.com/bins/1h00ok 已寄出数据
+	            url: "https://api.myjson.com/bins/1h00ok",  //  https://api.myjson.com/bins/z5gqk 未寄出数据
+				dataType : "json", // 指定返回类型 
+	            success: function (data) {
+					if(data.length!=0){
+						$("#czxm").text(data[0].czxm);
+						$("#lxdh").text(data[0].lxdh);
+						$("#cphm").text(data[0].cphm);
+						var state="";
+						if(data[0].yjfs==1){
+							state="自取";
+						}
+						if(data[0].yjfs==2){
+							state="邮寄";
+						}
+						$("#yjfs").text(state);
+						var state1 = "";
+				        if(data[0].yjzt=="1"){
+				            state1 = "未寄出";
+				        }else if(data[0].yjzt=="2"){
+				            state1 = "已寄出";
+				        }else if(data[0].yjzt=="3"){
+				            state1 = "已取走";
+				        }
+						$("#yjzt").text(state1);
+						var yjzt=$("#yjzt").text();
+						if(yjzt=="已寄出"){   //判断邮寄状态
+							$("#yjzt").after('&ensp;<button type="" id="btn">查看</button>');
+							
+						}else{ //其它状态无法查看邮寄轨迹
+							$(".package-status").css('display', 'none');
+						}
+					}else{
+						alert("数据加载失败");
+					}
+	            },  
+	            error: function () {  
+	                alert("个人信息加载失败");  
+	            }  
+	  		});
+
+	  		//获取快递进度信息
+	  		var times=0;
+	  		$("#parent_btn").on('click', '#btn', function(event) {
+	  			// $("#btn").attr('disabled', true);
+	  			times++;
+   				$.ajax({
+  					type:"get",
+  					url:"https://api.myjson.com/bins/tfqy8",
+  					dataType:"json",
+  					success: function (data) {
+  						// $("#btn").attr('disabled', false);
+  						var html="";
+  						for(var i=0;i<data.length;i++){
+  							html+="<ul class='status-list'>";
+  							if(i!=data.length-1){
+  								html+="<li>";
+  								html+="<div class='status-content-before'>"+data[i].time+"</div>";
+  								html+="<div class='status-time-before'>"+data[i].text+"</div>";
+  								html+="<div class='status-line'>"+"</div>";
+  								html+"</li>"
+  							}else{
+  								html+="<li class='latest'>";
+  								html+="<div class='status-content-latest'>"+data[i].time+"</div>";
+  								html+="<div class='status-time-latest'>"+data[i].text+"</div>";
+  								html+="<div class='status-line'>"+"</div>";
+  								html+"</li>"
+  							}
+  								html+="</ul>";
+  						}
+  						$(".status-box").html(html);
+  						// $(".package-status").css('display', 'block');
+  					},
+  					error: function () {  
+	                alert("快递信息获取失败");  
+	             }
+  				});
+  				if(times%2==1){
+  					console.log(times);
+  					$("#btn").text('收起');
+  					$(".package-status").css('display', 'block');
+  				}
+  				if(times%2==0){
+  					console.log(times);
+  					$("#btn").text('查看');
+  					$(".package-status").css('display', 'none');
+  				}
+	  		});	
+		});
+
+	</script>
+</body>
+</html>

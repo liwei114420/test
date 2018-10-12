@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>后台邮政邮寄状态查询</title> /<!-- /暂时不用 -->
+	<meta name=viewport content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" type="text/css" href="res/bootstrap-3.3.7/dist/css/bootstrap.min.css">
+	<link rel="stylesheet" type="text/css" href="res/bootstrap-3.3.7/dist/css/bootstrap-theme.css">
+	<link rel="stylesheet" type="text/css" href="res/bootstrap-table-master/dist/bootstrap-table.min.css">
+	<link rel="stylesheet" type="text/css" href="res/bootstrap-datetimepicker-master/css/bootstrap-datetimepicker.min.css">
+	<script type="text/javascript" src="js/jquery-3.3.1.min.js"></script>
+	<script type="text/javascript" src="res/bootstrap-3.3.7/dist/js/bootstrap.min.js"></script>
+	<script type="text/javascript" src="res/bootstrap-table-master/dist/bootstrap-table.min.js"></script>
+	<script type="text/javascript" src="res/bootstrap-table-master/dist/locale/bootstrap-table-zh-CN.min.js"></script>
+	<script type="text/javascript" src="res/bootstrap-datetimepicker-master/js/bootstrap-datetimepicker.min.js"></script>
+	<script type="text/javascript" src="res/bootstrap-datetimepicker-master/js/locales/bootstrap-datetimepicker.zh-CN.js"></script>
+</head>
+<style type="text/css">
+ 	input{
+ 		height: 34px;
+ 		width: 150px;
+ 	}
+ 	select{
+ 		height: 34px;
+ 		width: 75px;
+ 	}
+ 	h3{
+ 		text-align: center;
+		color: #ff9800;
+ 	}
+ 	.form{
+			width: 98%;
+			text-align: center;
+			border:2px solid #ffc107;
+			padding: 30px;
+			border-radius: 30px;
+			margin:0 auto;
+	}
+	label{
+		margin: 10px 0;
+	}
+	button{
+		margin-left: 10px;
+	}
+	.footer{
+		margin-top:30px;
+	}
+	.time{
+		margin-right: 40px;
+	}
+	.table{
+		text-align: center;
+	}
+	.tb_th tr th{
+		text-align: center;
+		vertical-align: middle;
+	}
+</style>
+<body>
+	<div class="contianer">
+	<h3>车牌直邮信息查询</h3>
+	<div class="form">
+	    <label class="time">时间段：
+	    <input size="16" type="text" readonly class="startTime">
+	   	-至-
+	    <input size="16" type="text" readonly class="endTime">
+	    </label>
+	    <br>
+	    <label class="cph">车牌号:
+	        <input type="text" name="" id="cphm">
+	        邮寄方式:
+	        <select name="邮寄方式" id="yjfs">
+	            <option selected="selected" disabled="disabled" style='display: none' value=''></option>
+	            <option value="直邮">直邮</option>
+	            <option value="自取">自取</option>
+	        </select>
+	        <button type="button" id="search" class="btn btn-success">查询</button>
+	    </label>
+	    <br>
+	    </div>
+	</div>
+	<div class="table-responsive  footer" >
+		<table class="table table-bordered">
+			<thead class="tb_th">
+				<tr class="warning">
+					<th>序号</th>
+					<th>车主姓名</th>
+					<th>联系电话</th>
+					<th>车牌号</th>
+					<th>邮寄方式</th>
+					<th>状态</th>
+				</tr>
+			</thead>
+			<tbody id="tb">
+			</tbody>
+		</table>
+	</div>
+</body>
+	<script type="text/javascript">
+		$(function(){
+			$("#search").on('click', function(event) {
+				var $yjfs=$("#yjfs").find("option:selected").text();
+				var $start=$(".startTime").val();
+				var $end=$(".endTime").val();
+				var $cph=$("#cphm").val();
+				console.log($yjfs);
+				console.log($start);
+				console.log($end);
+				console.log($cph);
+				//时间段查询
+				// if(($start==""||$end=="")&&$cph==""){ //时间段查询信息不完整
+				// 	alert("请输入开始时间和结束时间");
+				// }
+				// else if($start>$end&&$cph==""){  //开始时间大于结束时间
+				// 	alert("起始时间不能大于结束时间");
+				// }
+		  // 		else{
+			 //  		$.ajax({
+				// 	url : "",
+				// 	data: {"businessType":businessType,"startTime":$start,"endTime":$end,"yjfs":$yjfs,"zphm":$cph},//传值
+				// 	type : 'post',
+				// 	success : function(data1) {
+				// 		var data = JSON.parse(data1);//转换为json对象
+				// 		console.log(data);
+				// 		var html = "";
+				// 		for ( var i = 0; i < data.length; i++) {
+				// 			html += "<tr>";
+				// 	        html += "<td>"+ (i+1) + "</td>";
+				// 	        html += "<td>"+ data[i].czxm + "</td>";
+				// 	        html += "<td>"+ data[i].lxdh + "</td>";
+				// 	        html += "<td>"+ data[i].cph + "</td>";
+				// 	        html += "<td>"+ data[i].yjfs + "</td>";
+				// 	        var state = "";
+				// 	        if(data[i].zt=="1"){
+				// 	            state = "未寄出";
+				// 	        }else if(data[i].zt=="2"){
+				// 	            state = "已寄出";
+				// 	        }else if(data[i].zt=="3"){
+				// 	            state = "已取走";
+				// 	        }
+				// 	          html += "<td>"+state+"</td>";
+				// 	          html += "</tr>";  
+				// 	        }
+				// 	        $("#tb").html(html);
+				// 		}
+				// 	});
+		  // 		}
+			});
+			$(".startTime").datetimepicker({
+		    	format: 'yyyy-mm-dd',
+		    	language: 'zh-CN',
+		        minView:'month',
+		        keyboardNavigation:'true',
+		        autoclose:'true',
+		        todayBtn:'true'
+	    	});
+	   	 	$(".endTime").datetimepicker({
+	    	format: 'yyyy-mm-dd',
+		    	language: 'zh-CN',
+		        minView:'month',
+		        keyboardNavigation:'true',
+		        autoclose:'true',
+		        todayBtn:'true'
+	    	});
+	});
+	</script>
+</html>
